@@ -1,6 +1,6 @@
 # ItemCrud
 
-## Instalar dependencias
+## Instalar dependências
 
 Use o comando `npm install` para instalar as dependências do projeto.
 
