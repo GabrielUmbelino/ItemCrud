@@ -1,7 +1,9 @@
+import { UnidadesMedidas } from './unidadesMedidas';
+
 export class Item {
   id: number;
   nome: String;
-  unidadeMedida: String;
+  unidadeMedida: UnidadesMedidas;
   quantidade: Number;
   preco: Number;
   perecivel: Boolean;
