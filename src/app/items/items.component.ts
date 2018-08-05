@@ -1,39 +1,63 @@
-import { Component, OnInit } from '@angular/core';
-import { ItemsService } from './shared/items.service';
-import { Item } from './shared/item';
-import {TableModule} from 'primeng/table';
+import {Component, OnInit} from '@angular/core';
+import {ItemsService} from './shared/items.service';
+import {Item} from './shared/item';
+import {Router} from '@angular/router';
 import {routerTransition} from '../router.animations';
+import {UnidadesMedidas} from './shared/unidadesMedidas';
 
 @Component({
     selector: 'app-items',
     templateUrl: './items.component.html',
-    styleUrls: ['./items.component.css']
+    styleUrls: ['./items.component.css'],
     animations: [routerTransition()],
     // tslint:disable-next-line:use-host-property-decorator
     host: {'[@routerTransition]': ''}
+
   })
 
 export class ItemsComponent implements OnInit {
 
     private items: Item[] = [];
-    constructor(private itemsService: ItemsService) { }
+    title = 'Itens';
+    searchTerm = '';
+    loading = false;
+    constructor(
+        private itemsService: ItemsService,
+        private router: Router,
+    ) { }
+
     ngOnInit() {
         this.itemsService.get()
         .then( (data) => {
-            this.items = data;
+            this.items = data ? data : [];
         });
     }
-    // deleteUser(user){
-    //   if (confirm("Are you sure you want to delete " + user.name + "?")) {
-    //     var index = this.users.indexOf(user);
-    //     this.users.splice(index, 1);
-    //     this.usersService.deleteUser(user.id)
-    //       .subscribe(null,
-    //         err => {
-    //           alert("Could not delete user.");
-    //           // Revert the view back to its original state
-    //           this.users.splice(index, 0, user);
-    //         });
-    //   }
-    // }
+
+    add() {
+        this.router.navigate(['/items/new']);
+    }
+
+    edit(id) {
+        this.router.navigate(['/items', id]);
+    }
+
+    formatDate(date) {
+        return this.itemsService.formatDate(date);
+    }
+
+    getUnidadeMedida(un) {
+        return UnidadesMedidas[un];
+    }
+
+    isExpired(item: Item) {
+        return this.itemsService.isExpired(new Date(item.validade));
+    }
+    filterItems(term: string) {
+        this.loading = true;
+        this.itemsService.search(term)
+        .then( (data) => {
+            this.items = data ? data : [];
+            this.loading = false;
+        });
+    }
 }

@@ -3,7 +3,7 @@ import {CommonModule} from '@angular/common';
 import {ReactiveFormsModule, FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {HttpModule} from '@angular/http';
-import {TableModule} from 'primeng/table';
+import {DataScrollerModule} from 'primeng/datascroller';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {InputTextModule} from 'primeng/inputtext';
@@ -13,10 +13,16 @@ import {CurrencyMaskModule} from 'ng2-currency-mask';
 import {CalendarModule} from 'primeng/calendar';
 import {InputSwitchModule} from 'primeng/inputswitch';
 
-import {ItemsComponent} from './items.component';
 import {ItemsService} from './shared/items.service';
-import {ItemFormComponent} from './item-form/item-form.component';
-import { ItemRoutingModule, routedComponents } from './items-routing.module';
+import {ItemRoutingModule, routedComponents} from './items-routing.module';
+import {LOCALE_ID} from '@angular/core';
+import {registerLocaleData} from '@angular/common';
+import localePt from '@angular/common/locales/pt';
+import {ConfirmationService} from 'primeng/api';
+import {DialogModule} from 'primeng/dialog';
+import { FilterItems } from './shared/filter.items';
+
+registerLocaleData(localePt);
 
 @NgModule({
     imports: [
@@ -25,7 +31,7 @@ import { ItemRoutingModule, routedComponents } from './items-routing.module';
         ReactiveFormsModule,
         RouterModule,
         HttpModule,
-        TableModule,
+        DataScrollerModule,
         CardModule,
         ButtonModule,
         InputTextModule,
@@ -34,18 +40,18 @@ import { ItemRoutingModule, routedComponents } from './items-routing.module';
         CurrencyMaskModule,
         CalendarModule,
         InputSwitchModule,
-        ItemRoutingModule
+        ItemRoutingModule,
+        DialogModule
     ],
     declarations:  [
-        ItemsComponent,
-        ItemFormComponent,
-        routedComponents
+        routedComponents,
+        FilterItems
     ],
-    exports: [
-        ItemsComponent
-    ],
+
     providers: [
-        ItemsService
+        ItemsService,
+        ConfirmationService,
+        {provide: LOCALE_ID, useValue: 'pt-BR'}
     ]
 })
 export class ItemsModule {}

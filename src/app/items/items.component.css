@@ -1,0 +1,9 @@
+.item {
+    border-bottom: solid 2px#dedede;
+    transition: all cubic-bezier(0.4, 0, 1, 1) .2s;
+    cursor: pointer;
+}
+.item:hover {
+    background: #00BCD4;
+    color: #fff;
+}

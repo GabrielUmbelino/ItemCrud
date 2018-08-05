@@ -1,29 +1,59 @@
-<p-card class="ui-g-12 ui-md-8  ui-md-offset-2" [title]="title">
-    <a href="/items/new">Adicionar Item</a>
-    <p-table [value]="items">
-        <ng-template pTemplate="header">
-            <tr>
-                <th>Id</th>
-                <th>Nome</th>
-                <th>Un. Medida</th>
-                <th>Quantidade</th>
-                <th>Preço</th>
-                <th>Perecivel</th>
-                <th>Validade</th>
-                <th>Fabricação</th>
-            </tr>
+<p-card class="ui-g-12 ui-md-10  ui-md-offset-1" [title]="title">
+    <div class="ui-g form-group">
+        <div class="ui-g-12 ui-md-6">
+            <button pButton type="button" label="Adicionar" (click)="add()" class="ui-button-primary"></button>
+        </div>
+        <div class="ui-g-12 ui-md-6">
+                <span class="ui-float-label">
+                    <input type="text" placeholder="" pInputText (input)="filterItems($event.target.value)">
+                    <label>Pesqusia</label>
+                </span>
+                <div *ngIf="loading">
+                        buscando items...
+                </div>
+        </div>
+    </div>
+
+    <p-dataScroller [value]="items" [rows]="10"  [loader]="loadButton" [inline]="true" scrollHeight="450px">
+        <p-header>            
+                {{items.length ? 'Itens' : 'Nenhum item cadastrado'}}
+
+        </p-header>
+        <ng-template let-item pTemplate="item">
+            <div class="ui-g item" (click)="edit(item.id)">
+            <div class="ui-g-12 ui-md-4">
+                <div class="ui-g">
+                    <div class="ui-g-12">ID: {{item.id}}</div>    
+                    <div class="ui-g-12 ui-sm-6">Nome: </div>
+                    <div class="ui-g-12 ui-sm-6">{{item.nome}}</div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-4">
+                <div class="ui-g">
+                    <div class="ui-g-12">Un. Medida: {{getUnidadeMedida(item.unidadeMedida)}}</div>
+                    <div class="ui-g-12">Preço: {{item.preco | currency:'BRL':true}}</div>
+                    <div class="ui-g-12">Quantidade: {{item.quantidade}}</div>
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-4">
+                <div class="ui-g">
+                    
+                    <div class="ui-g-12">Fabrição: {{formatDate(item.fabricacao)}}</div>
+                    <div class="ui-g-12">Perecivel: {{item.perecivel ? 'Sim' : 'Não'}}</div>
+                    <div *ngIf="item.perecivel" class="ui-g-12">
+                        <span>Validade: {{formatDate(item.validade)}}</span>
+                        <br/>
+                        <small *ngIf="isExpired(item)"style="color: red;">
+                            Vencido
+                        </small>
+                    </div>
+
+                </div>
+            </div>
+            </div>
         </ng-template>
-        <ng-template pTemplate="body" let-item>
-            <tr>
-                <td>{{item.id}}</td>
-                <td>{{item.nome}}</td>
-                <td> {{item.unidadeMedida}}</td>
-                <td> {{item.quantidade}}</td>
-                <td> {{item.preco}}</td>
-                <td> {{item.perecivel}}</td>
-                <td> {{item.validade}}</td>
-                <td>{{item.fabricacao}}</td>
-            </tr>
-        </ng-template>
-    </p-table>
+        <p-footer *ngIf="items.length > 10">
+            <button #loadButton type="text" icon="pi pi-refresh" pButton label="ver mais"></button>
+        </p-footer>
+    </p-dataScroller>
 </p-card>
