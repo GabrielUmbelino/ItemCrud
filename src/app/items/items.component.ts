@@ -2,11 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { ItemsService } from './shared/items.service';
 import { Item } from './shared/item';
 import {TableModule} from 'primeng/table';
+import {routerTransition} from '../router.animations';
 
 @Component({
     selector: 'app-items',
     templateUrl: './items.component.html',
     styleUrls: ['./items.component.css']
+    animations: [routerTransition()],
+    // tslint:disable-next-line:use-host-property-decorator
+    host: {'[@routerTransition]': ''}
   })
 
 export class ItemsComponent implements OnInit {

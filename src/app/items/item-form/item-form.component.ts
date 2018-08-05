@@ -3,11 +3,15 @@ import { Item } from '../shared/item';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ItemsService } from '../shared/items.service';
+import { routerTransition } from '../../router.animations';
 
 @Component({
     selector: 'app-item-form',
     templateUrl: './item-form.component.html',
     styleUrls: ['./item-form.component.css']
+    animations: [routerTransition()],
+    // tslint:disable-next-line:use-host-property-decorator
+    host: {'[@routerTransition]': ''}
 })
 export class ItemFormComponent implements OnInit {
 
