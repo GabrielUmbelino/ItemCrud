@@ -13,7 +13,6 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
-import { NothingFoundComponent } from './nothing-found/nothing-found.component';
 import { ItemsModule } from './items/items.module';
 
 import { HttpModule } from '@angular/http';
@@ -22,7 +21,6 @@ import { HttpModule } from '@angular/http';
 @NgModule({
   declarations: [
     AppComponent,
-    NothingFoundComponent
   ],
   imports: [
     BrowserModule,
