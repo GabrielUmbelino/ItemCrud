@@ -1,65 +1,120 @@
-<p-card class="ui-g-12 ui-md-6 ui-md-offset-3" [title]="title" [formGroup]="form">
+<p-dialog header="Aviso" [(visible)]="display"  [width]="300">
+    {{msgContent}}
+</p-dialog>
+<p-card class="ui-g-12 ui-md-10 ui-md-offset-1" [title]="title" [formGroup]="form">
     <div class="ui-g form-group">
         <div class="ui-g-12 ui-md-6">
             <span class="ui-float-label">
-                <input id="nome" type="text" pInputText formControlName="nome">
-                <label for="nome">Nome</label>
-                <div *ngIf="nome.invalid && (nome.dirty || nome.touched)" class="alert alert-danger">
-                    <div *ngIf="nome.errors.required">
-                        Campo obrigatório.
-                    </div>
-                    <div *ngIf="nome.errors.minlength">
-                        Mínimo 3 caracteres.
-                    </div>
+                <input type="text" pInputText formControlName="nome" [(ngModel)]="item.nome" maxlength="50">
+                <label>Nome</label>
+            </span>
+            <div *ngIf="nome.invalid && (nome.dirty || nome.touched || submited)" class="alert alert-danger">
+                <div *ngIf="nome.errors.required">
+                    Campo obrigatório.
                 </div>
-            </span>
-        </div>
-        <div class="ui-g-12 ui-md-6">
-            <p-dropdown [options]="unidadeMedidas" formControlName="unidadeMedida"  placeholder="Selecione"></p-dropdown>
-        </div>
-        
-    </div>
-    <div class="ui-g form-group">
-        <div class="ui-g-12 ui-md-6">
-            <span class="ui-float-label">
-                <input id="nome" type="number" max="9999" pInputText [(ngModel)]="item.quantidade">
-                <label for="nome">Quantidade</label>
-            </span>
+                <div *ngIf="nome.errors.minlength">
+                    Mínimo 3 caracteres.
+                </div>
+            </div>
         </div>
         <div class="ui-g-12 ui-md-6">
             <span class="ui-float-label">
-                <input id="preco" currencyMask [(ngModel)]="item.preco" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }">
-                <label for="preco">Preço</label>
+                <p-dropdown [options]="medidas" formControlName="unidadeMedida"  placeholder="Unidades de Medida" [(ngModel)]="item.unidadeMedida"></p-dropdown>
             </span>
+            <div *ngIf="unidadeMedida.invalid && (unidadeMedida.dirty || unidadeMedida.touched || submited)" class="alert alert-danger">
+                <div *ngIf="unidadeMedida.errors.required">
+                    Campo obrigatório.
+                </div>
+            </div>
         </div>
     </div>
     <div class="ui-g form-group">
         <div class="ui-g-12 ui-md-6">
             <span class="ui-float-label">
-                <p-calendar id="validade" [(ngModel)]="item.validade" dateFormat="dd/mm/yy"  [showIcon]="true"></p-calendar>
-                <label for="validade">Validade</label>
+                <input currencyMask type="text" pInputText [options]="item.unidadeMedida ? unitRules[item.unidadeMedida] : unitRules.default" formControlName="quantidade" [(ngModel)]="item.quantidade">
+                <label>Quantidade</label>
             </span>
+            <div *ngIf="quantidade.invalid && (quantidade.dirty || quantidade.touched || submited)" class="alert alert-danger">
+                <div *ngIf="quantidade.errors.required">
+                    Campo obrigatório.
+                </div>
+            </div>
         </div>
         <div class="ui-g-12 ui-md-6">
             <span class="ui-float-label">
-                <p-calendar id="fabricacao" [(ngModel)]="item.fabricacao"  dateFormat="dd/mm/yy" [showIcon]="true"></p-calendar>
-                <label for="fabricacao">Fabricação</label>
+                <input currencyMask type="text" pInputText [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }" formControlName="preco" [(ngModel)]="item.preco">
+                <label >Preço</label>
             </span>
+            <div *ngIf="preco.invalid && (preco.dirty || preco.touched || submited)" class="alert alert-danger">
+                <div *ngIf="preco.errors.required">
+                    Campo obrigatório.
+                </div>
+            </div>
         </div>
-        <div class="ui-g-12 ui-md-6">
-            <p-inputSwitch [(ngModel)]="item.perecivel"  name="Yes" offLabel="No" ></p-inputSwitch>
+    </div>
+    <div class="ui-g form-group">
+        <div class="ui-g-12">
+            <p-inputSwitch formControlName="perecivel"  name="Sim" offLabel="Não" [(ngModel)]="item.perecivel"></p-inputSwitch>
             <label>Perecível</label>
+            <div *ngIf="perecivel.invalid && (perecivel.dirty || perecivel.touched || submited)" class="alert alert-danger">
+                <div *ngIf="perecivel.errors.required">
+                    Campo obrigatório.
+                </div>
+            </div>
+        </div>
+        <div class="ui-g-12 ui-md-6">
+            <span class="ui-float-label">
+                <p-calendar dateFormat="dd/mm/yy" [showIcon]="true" formControlName="fabricacao" [(ngModel)]="item.fabricacao"></p-calendar>
+                <label>Fabricação</label>
+            </span>
+            <div *ngIf="fabricacao.invalid && (fabricacao.dirty || fabricacao.touched || submited)" class="alert alert-danger">
+                <div *ngIf="fabricacao.errors.required">
+                    Campo obrigatório.
+                </div>
+            </div>
+            <div *ngIf="fabricationValidate()" class="alert alert-danger">
+                Data de fabricação deve ser inferior a {{formatDate(item.validade)}}
+            </div>
+
+        </div>
+        <div class="ui-g-12 ui-md-6">
+            <span class="ui-float-label">
+                <p-calendar dateFormat="dd/mm/yy"  [showIcon]="true" formControlName="validade" [disabled]="!perecivel.value" [(ngModel)]="item.validade"></p-calendar>
+                <label>Validade</label>
+            </span>
+            <small *ngIf="isExpired(item)"style="color: red;">
+                    Vencido
+            </small>
+            <div *ngIf="validade.invalid && (validade.dirty || validade.touched || submited)" class="alert alert-danger">
+                <div *ngIf="validade.errors.required">
+                    Campo obrigatório.
+                </div>
+            </div>
         </div>
     </div>
-
-        
     <div class="ui-g form-group">
-        <div class="ui-g-12 ui-md-6">
-            <a href="/items/"> voltar</a>
+        <div class="ui-g-12">
+            <button pButton type="button" label="Cancelar" (click)="cancel()" class="ui-button-primary"></button>
+            <button pButton type="button" label="Salvar" (click)="save()" style="float: right;"  class="ui-button-success" [ngClass]="{ 'ui-state-disabled' : form.invalid}"></button>            
         </div>
-        <div class="ui-g-12 ui-md-6">
-            <button pButton type="button" label="Salvar" (click)="save()"></button>
+        <div *ngIf="form.invalid && submited" class="alert alert-danger my-center-text">
+            Erro no preenchimento do formulário, verifique os campos.
         </div>
     </div>
       
+</p-card>
+<p-card *ngIf="item.id" class="ui-g-12 ui-md-10 ui-md-offset-1" [title]="Remover">
+    <div class="ui-g form-group">
+        <div class="ui-g-12">
+            <b>Delete este item</b><br>
+            <label>Uma vez que um item é deletado, não há volta. </label>
+        </div>
+        <div class="ui-g-12">
+            <button pButton type="button" [label]="confirmDelete ? 'Cancelar': 'Remover Item'" (click)="confirmDelete = !confirmDelete" [ngClass]="confirmDelete ? 'ui-button-success' : 'ui-button-danger'"></button>
+        </div>
+        <div class="ui-g-12" *ngIf="confirmDelete">
+            <b>Você tem certea que deseja excluir o item {{item.id}}?</b>
+            <button pButton type="button" label="Sim" (click)="delete()" class="ui-button-danger"></button>
+        </div>
+    </div>
 </p-card>
