@@ -2,7 +2,9 @@
 
 ## Instalar dependências
 
-Use o comando `npm install` para instalar as dependências do projeto.
+Para instalar as dependências do projeto use os comandos abaixo:
+ `npm install`
+ `npm install -g @angular/cli`
 
 
 ## Executar projeto
